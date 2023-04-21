@@ -58,6 +58,8 @@ public class Bot
             Logger.Debug(message.ToString());
             return Task.CompletedTask;
         };
+        this.Client.JoinedGuild += async (guild) => await this._interactionService.RegisterCommandsToGuildAsync(guild.Id);
+        this.Client.Ready += this.ClientReadyHandler;
         
         // Initialize the interaction service (commands).
         await this._interactionService.AddModulesAsync(Assembly.GetEntryAssembly(), null);
@@ -70,5 +72,18 @@ public class Bot
         // Start the bot.
         await this.Client.LoginAsync(TokenType.Bot, Configuration.Get().Discord.Token);
         await this.Client.StartAsync();
+    }
+
+    /// <summary>
+    /// Handles the bot being ready.
+    /// </summary>
+    private async Task ClientReadyHandler()
+    {
+        // Register the guild commands.
+        // Guild commands load much faster than global commands.
+        foreach (var guild in this.Client.Guilds)
+        {
+            await this._interactionService.RegisterCommandsToGuildAsync(guild.Id);
+        }
     }
 }
