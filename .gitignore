@@ -5,6 +5,7 @@
 
 # Project-specific
 configurations/
+configuration.json
 docker-compose.override.yml
 
 # User-specific files
