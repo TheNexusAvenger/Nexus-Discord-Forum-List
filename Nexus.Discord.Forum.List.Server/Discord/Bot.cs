@@ -41,7 +41,7 @@ public class Bot
     {
         var config = new DiscordSocketConfig()
         {
-            GatewayIntents = GatewayIntents.All, // TODO: Lower intents.
+            GatewayIntents = GatewayIntents.MessageContent | GatewayIntents.Guilds | GatewayIntents.GuildMembers,
         };
         this.Client = new DiscordSocketClient(config);
         this._interactionService = new InteractionService(this.Client.Rest);
