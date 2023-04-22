@@ -1,7 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Discord;
 using Discord.Interactions;
+using Discord.Net;
 using Nexus.Discord.Forum.List.Server.State;
 
 namespace Nexus.Discord.Forum.List.Server.Discord;
@@ -16,7 +16,7 @@ public class Commands : InteractionModuleBase
         {
             await channel.GetPublicArchivedThreadsAsync();
         }
-        catch (Exception e)
+        catch (HttpException)
         {
             await this.RespondAsync($"<#{channel.Id}> is not visible to this bot.", ephemeral: true);
             return;

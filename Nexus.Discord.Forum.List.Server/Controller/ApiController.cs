@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Discord;
+using Discord.Net;
 using Discord.WebSocket;
 using Microsoft.AspNetCore.Mvc;
 using Nexus.Discord.Forum.List.Server.Discord;
@@ -14,34 +15,76 @@ public class ApiController
 {
     [HttpGet]
     [Route("list/{id}")]
-    public async Task<ForumThreadList> ListThreads(ulong id)
+    public async Task<ObjectResult> ListThreads(ulong id)
     {
         // Get the channel.
-        // TODO: Access errors, incorrect type, not found
-        var channel = (SocketForumChannel) Bot.GetBot().Client.GetChannel(id);
+        var channel = Bot.GetBot().Client.GetChannel(id);
+        if (channel == null)
+        {
+            return new ObjectResult(ErrorMessage.ChannelNotFound)
+            {
+                StatusCode = 404,
+            };
+        }
+        if (channel.GetChannelType() != ChannelType.Forum)
+        {
+            return new ObjectResult(ErrorMessage.CreateInvalidChannelTypeMessage(ChannelType.Forum, channel))
+            {
+                StatusCode = 400,
+            };
+        }
         
         // List the threads.
+        var forumChannel = (SocketForumChannel) channel;
         var response = new ForumThreadList()
         {
-            Tags = channel.Tags.Select(ForumThreadTag.FromForumTag).ToList(),
+            Tags = forumChannel.Tags.Select(ForumThreadTag.FromForumTag).ToList(),
         };
-        foreach (var thread in await channel.GetActiveThreadsAsync())
+        foreach (var thread in await forumChannel.GetActiveThreadsAsync())
         {
             response.Threads.Add(ForumThread.FromIThreadChannel(await thread.ToSocketThreadChannelAsync()));
         }
-        foreach (var thread in await channel.GetPublicArchivedThreadsAsync())
+        try
         {
-            response.Threads.Add(ForumThread.FromIThreadChannel(thread));
+            foreach (var thread in await forumChannel.GetPublicArchivedThreadsAsync())
+            {
+                response.Threads.Add(ForumThread.FromIThreadChannel(thread));
+            }
+        }
+        catch (HttpException)
+        {
+            return new ObjectResult(ErrorMessage.ForumNotAccessible)
+            {
+                StatusCode = 403,
+            };
+        }
+
+        // Build the response.
+        return new ObjectResult(response);
+    }
+    
+    [HttpGet]
+    [Route("contents/{id}")]
+    public async Task<ObjectResult> GetThreadContents(ulong id)
+    {
+        // Get the channel.
+        var channel = Bot.GetBot().Client.GetChannel(id);
+        if (channel == null)
+        {
+            return new ObjectResult(ErrorMessage.ChannelNotFound)
+            {
+                StatusCode = 404,
+            };
+        }
+        if (channel.GetChannelType() != ChannelType.PublicThread)
+        {
+            return new ObjectResult(ErrorMessage.CreateInvalidChannelTypeMessage(ChannelType.PublicThread, channel))
+            {
+                StatusCode = 400,
+            };
         }
         
         // Build the response.
-        return response;
-    }
-    [HttpGet]
-    [Route("contents/{id}")]
-    public async Task<ForumThread> GetThreadContents(ulong id)
-    {
-        // TODO: Access errors, incorrect type, not found.
-        return await ForumThread.FromIThreadChannelWithContentsAsync((IThreadChannel) Bot.GetBot().Client.GetChannel(id));
+        return new ObjectResult(await ForumThread.FromIThreadChannelWithContentsAsync((IThreadChannel) channel));
     }
 }
