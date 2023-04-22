@@ -26,7 +26,11 @@ public class Program
         
         // Build the server.
         Logger.Debug("Preparing web server.");
-        var builder = WebApplication.CreateBuilder(args);
+        var builder = WebApplication.CreateBuilder(new WebApplicationOptions()
+        {
+            Args = args,
+            WebRootPath = "web",
+        });
         builder.Logging.ClearProviders();
         builder.Logging.AddProvider(Logger.NexusLogger);
         builder.Services.AddControllers();
@@ -47,6 +51,7 @@ public class Program
             });
         });
         app.MapControllers();
+        app.UseStaticFiles();
         Logger.Info($"Starting server on port {port}.");
         app.Run($"http://*:{port}");
     }

@@ -13,4 +13,8 @@
       <PackageReference Include="Nexus.Logging" Version="1.2.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Content Include="..\web\**" LinkBase="web\" CopyToOutputDirectory="PreserveNewest" />
+    </ItemGroup>
+
 </Project>

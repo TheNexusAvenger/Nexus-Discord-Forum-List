@@ -38,6 +38,8 @@ public class ApiController
         var forumChannel = (SocketForumChannel) channel;
         var response = new ForumThreadList()
         {
+            ServerName = forumChannel.Guild.Name,
+            ForumName = forumChannel.Name,
             Tags = forumChannel.Tags.Select(ForumThreadTag.FromForumTag).ToList(),
         };
         foreach (var thread in await forumChannel.GetActiveThreadsAsync())
