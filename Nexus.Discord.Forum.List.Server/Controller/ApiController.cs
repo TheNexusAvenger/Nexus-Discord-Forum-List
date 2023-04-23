@@ -71,7 +71,7 @@ public class ApiController
     public async Task<ObjectResult> GetThreadContents(ulong id)
     {
         // Get the channel.
-        var channel = Bot.GetBot().Client.GetChannel(id);
+        var channel = await Bot.GetBot().Client.GetChannelAsync(id);
         if (channel == null)
         {
             return new ObjectResult(ErrorMessage.ChannelNotFound)
