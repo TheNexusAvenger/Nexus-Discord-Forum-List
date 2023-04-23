@@ -16,6 +16,10 @@ body, div, span {
     font-weight: 600;
 }
 
+.Secondary {
+    color: rgb(196, 201, 206);
+}
+
 /*
  * Header
  */
@@ -49,7 +53,6 @@ span.HeaderServerName {
 
 span.HeaderForumName, span.HeaderForumNameSeparator {
     font-size: 24px;
-    color: rgb(200, 200, 200);
     display: table-cell;
     vertical-align: middle;
 }
