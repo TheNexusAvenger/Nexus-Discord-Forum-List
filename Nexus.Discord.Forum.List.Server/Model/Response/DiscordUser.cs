@@ -7,7 +7,7 @@ public class DiscordUser
     /// <summary>
     /// Id of the user.
     /// </summary>
-    public ulong Id { get; set; }
+    public string Id { get; set; } = null!;
 
     /// <summary>
     /// Name of the user.
@@ -33,7 +33,7 @@ public class DiscordUser
     {
         return new DiscordUser()
         {
-            Id = user.Id,
+            Id = user.Id.ToString(),
             Name = user.Username,
             DisplayName = user.Nickname ?? user.Username,
             ProfilePicture = user.GetDisplayAvatarUrl() ?? user.GetAvatarUrl() ?? $"https://cdn.discordapp.com/embed/avatars/{user.Id % 6}.png",
@@ -49,7 +49,7 @@ public class DiscordUser
     {
         return new DiscordUser()
         {
-            Id = userId,
+            Id = userId.ToString(),
             Name = $"<@{userId}>",
             DisplayName = $"<@{userId}>",
             ProfilePicture = $"https://cdn.discordapp.com/embed/avatars/{userId % 6}.png",

@@ -12,7 +12,7 @@ public class ForumThread
     /// <summary>
     /// Id of the thread.
     /// </summary>
-    public ulong Id { get; set; }
+    public string Id { get; set; } = null!;
 
     /// <summary>
     /// URL used to access the thread.
@@ -47,7 +47,7 @@ public class ForumThread
     /// <summary>
     /// Ids of the tags for the thread.
     /// </summary>
-    public List<ulong> Tags { get; set; } = new List<ulong>();
+    public List<string> Tags { get; set; } = new List<string>();
 
     /// <summary>
     /// Message of the first post of the thread.
@@ -73,14 +73,14 @@ public class ForumThread
         // Build the response.
         return new ForumThread()
         {
-            Id = channel.Id,
+            Id = channel.Id.ToString(),
             Url = $"discord://discord.com/channels/{channel.GuildId}/{channel.Id}/",
             Name = channel.Name,
             OriginalPoster = author != null ? DiscordUser.FromGuildUser(author) : DiscordUser.FromUserId(channel.OwnerId),
             MemberCount = channel.MemberCount,
             MessageCount = channel.MessageCount,
             CreateTime = channel.CreatedAt,
-            Tags = channel.AppliedTags.ToList(),
+            Tags = channel.AppliedTags.Select(tag => tag.ToString()).ToList(),
             AccessState = ForumThreadAccessState.FromIThreadChannel(channel),
         };
     }

@@ -7,7 +7,7 @@ public class ForumThreadTag
     /// <summary>
     /// Id of the tag.
     /// </summary>
-    public ulong Id { get; set; }
+    public string Id { get; set; } = null!;
 
     /// <summary>
     /// Name of the tag.
@@ -28,7 +28,7 @@ public class ForumThreadTag
     {
         return new ForumThreadTag()
         {
-            Id = tag.Id,
+            Id = tag.Id.ToString(),
             Name = tag.Name,
             Emoji = tag.Emoji?.Name,
         };
