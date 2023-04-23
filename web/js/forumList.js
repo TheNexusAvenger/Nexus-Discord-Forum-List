@@ -27,12 +27,22 @@ let sortOptions = {
             return new Date(a.createTime) > new Date(b.createTime) ? -1 : 1;
         },
     },
-}
+};
+let forumAttributeOptions = [
+    {
+        "attribute": "isLocked",
+        "displayName": "🔒 Locked",
+    },
+    {
+        "attribute": "isArchived",
+        "displayName": "📦 Archived",
+    },
+];
 let filterData = {
     "sortOption": "CREATE_TIME_DESCENDING",
     "attributes": [],
     "tags": [],
-}
+};
 
 
 
@@ -82,7 +92,97 @@ function sortThreads() {
     }
 }
 
+/*
+ * Toggles the requested filter for an attribute.
+ */
+function toggleAttributeFilter(attributeName) {
+    if (filterData.attributes[attributeName] == true) {
+        filterData.attributes[attributeName] = false;
+    } else if (filterData.attributes[attributeName] == false) {
+        filterData.attributes[attributeName] = null;
+    } else {
+        filterData.attributes[attributeName] = true;
+    }
+    staticList.refresh();
+}
 
+/*
+ * Toggles the requested filter for a tag.
+ */
+function toggleTagFilter(tagId) {
+    if (filterData.tags[tagId] == true) {
+        filterData.tags[tagId] = false;
+    } else if (filterData.tags[tagId] == false) {
+        filterData.tags[tagId] = null;
+    } else {
+        filterData.tags[tagId] = true;
+    }
+    staticList.refresh();
+}
+
+
+
+class ForumListFilterBar extends React.Component {
+    /*
+     * Creates the forum list filter bar.
+     */
+    constructor(props) {
+        super(props);
+        this.refresh = this.refresh.bind(this);
+    }
+
+    /*
+     * Refreshes the filter view.
+     */
+    refresh() {
+        this.setState({});
+    }
+
+    /*
+     * Returns the HTML structure of the element.
+     */
+    render() {
+        // Build the attribute buttons.
+        let attributeButtons = [];
+        forumAttributeOptions.forEach(attribute => {
+            let className = "FilterButton";
+            if (filterData.attributes[attribute.attribute] == true) {
+                className += " FilterButtonSelectedInclude"
+            } else if (filterData.attributes[attribute.attribute] == false) {
+                className += " FilterButtonSelectedExclude"
+            }
+            attributeButtons.push(<div class={className} onClick={function() { toggleAttributeFilter(attribute.attribute) }}>
+                <span class="FilterButtonText">{attribute.displayName}</span>
+            </div>);
+        });
+
+        // Build the tag buttons.
+        let tagButtons = [];
+        listResponse.tags.forEach(tag => {
+            let tagText = tag.name;
+            if (tag.emoji != null) {
+                tagText = tag.emoji + " " + tag.name;
+            }
+            let className = "FilterButton";
+            if (filterData.tags[tag.id] == true) {
+                className += " FilterButtonSelectedInclude"
+            } else if (filterData.tags[tag.id] == false) {
+                className += " FilterButtonSelectedExclude"
+            }
+            tagButtons.push(<div class={className} onClick={function() { toggleTagFilter(tag.id) }}>
+                <span class="FilterButtonText">{tagText}</span>
+            </div>);
+        });
+
+        // Return the bar.
+        return <div class="ForumListFilterBar">
+            <div class="FilterSeparator"></div>
+            {attributeButtons}
+            <div class="FilterSeparator"></div>
+            {tagButtons}
+        </div>
+    }
+}
 
 class ForumListThread extends React.Component {
     /*
@@ -126,12 +226,11 @@ class ForumListThread extends React.Component {
 
         // Build the additional attributes.
         let attributes = [];
-        if (forumThread.accessState.isLocked) {
-            attributes.push(<span class="ForumThreadTag">🔒 Locked</span>)
-        }
-        if (forumThread.accessState.isArchived) {
-            attributes.push(<span class="ForumThreadTag">📦 Archived</span>)
-        }
+        forumAttributeOptions.forEach(attribute => {
+            if (forumThread.accessState[attribute.attribute]) {
+                attributes.push(<span class="ForumThreadTag">{attribute.displayName}</span>)
+            }
+        });
 
         // Build the message.
         let messageContents = <div class="ForumTextContents Secondary">Loading...</div>;
@@ -253,7 +352,10 @@ class ForumList extends React.Component {
         for (let i = 0; i < listResponse.threads.length; i++) {
             forumThreads.push(<ForumListThread listIndex={i}></ForumListThread>)
         }
-        return <div>{forumThreads}</div>
+        return <div>
+            <ForumListFilterBar/>
+            {forumThreads}
+        </div>
     }
 }
 
