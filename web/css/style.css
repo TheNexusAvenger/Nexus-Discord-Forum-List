@@ -58,3 +58,11 @@ span.HeaderForumNameSeparator {
     padding-left: 10px;
     padding-right: 10px;
 }
+
+/*
+ * Contents
+ */
+span.ErrorMessage {
+    position: absolute;
+    padding: 4px;
+}
