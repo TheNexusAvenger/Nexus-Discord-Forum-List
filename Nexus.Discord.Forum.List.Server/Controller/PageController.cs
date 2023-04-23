@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Discord;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using Nexus.Discord.Forum.List.Server.Discord;
 using Nexus.Discord.Forum.List.Server.Model.Response;
 
@@ -28,8 +29,15 @@ public class PageController
         
         // Build the response.
         var listResponse = (ForumThreadList) initialListResponse!;
+        var initialResponseContents = JsonConvert.SerializeObject(listResponse, new JsonSerializerSettings
+        {
+            ContractResolver = new DefaultContractResolver
+            {
+                NamingStrategy = new CamelCaseNamingStrategy()
+            },
+        });
         var pageData = (await File.ReadAllTextAsync("web/list.html", Encoding.UTF8))
-            .Replace("{initialListResponse}", JsonConvert.SerializeObject(JsonConvert.SerializeObject(initialListResponse)))
+            .Replace("{initialListResponse}", JsonConvert.SerializeObject(initialResponseContents))
             .Replace("{forumName}", listResponse.ForumName)
             .Replace("{serverName}", listResponse.ServerName)
             .Replace("{serverIconUrl}", listResponse.ServerIconUrl ?? "https://cdn.discordapp.com/embed/avatars/0.png");
