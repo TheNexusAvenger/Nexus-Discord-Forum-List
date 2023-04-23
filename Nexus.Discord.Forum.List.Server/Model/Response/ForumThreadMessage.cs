@@ -27,7 +27,7 @@ public class ForumThreadMessage
     /// <summary>
     /// Reactions to the message.
     /// </summary>
-    public Dictionary<string, int> Reactions { get; set; } = new Dictionary<string, int>();
+    public List<DiscordReaction> Reactions { get; set; } = new List<DiscordReaction>();
 
     /// <summary>
     /// Builds a ForumThreadMessage instance for a thread channel.
@@ -41,11 +41,11 @@ public class ForumThreadMessage
         if (message == null) return null;
         
         // Build the message.
-        var reactions = new Dictionary<string, int>();
-        foreach (var reaction in message.Reactions)
+        var reactions = message.Reactions.Select(reaction => new DiscordReaction()
         {
-            reactions[reaction.Key.Name] = reaction.Value.ReactionCount;
-        }
+            Reaction = reaction.Key.Name,
+            Total = reaction.Value.ReactionCount,
+        }).OrderByDescending(reaction => reaction.Total).ToList();
         return new ForumThreadMessage()
         {
             Message = message.Content,
