@@ -12,6 +12,9 @@ let converter = new showdown.Converter({
     "extensions": ["targetlink"],
 });
 
+// Prepare storing the state.
+let staticApp = null;
+
 
 
 class ForumListThread extends React.Component {
@@ -20,6 +23,14 @@ class ForumListThread extends React.Component {
      */
     constructor(props) {
         super(props);
+        this.refresh = this.refresh.bind(this);
+    }
+
+    /*
+     * Refreshes the displayed message.
+     */
+    refresh() {
+        this.setState({});
     }
 
     /*
@@ -56,13 +67,19 @@ class ForumListThread extends React.Component {
         }
 
         // Build the message.
-        let messageContents = <div class="ForumTextContents">Loading...</div>;
+        let messageContents = <div class="ForumTextContents Secondary">Loading...</div>;
         if (forumThread.message != null) {
             let message = forumThread.message.message;
             if (message == null || message == "") {
-                message = "*No message.*"
+                messageContents = <div class="ForumTextContents Secondary"><i>No message.</i></div>;
+            } else {
+                messageContents = <div class="ForumTextContents" dangerouslySetInnerHTML={{__html: converter.makeHtml(message)}}></div>;
             }
-            messageContents = <div class="ForumTextContents" dangerouslySetInnerHTML={{__html: converter.makeHtml(message)}}></div>;
+    
+        } else if (forumThread.messageLoadState == "LOADED") {
+            messageContents = <div class="ForumTextContents Secondary"><i>Original message deleted.</i></div>;
+        } else if (forumThread.messageLoadState == "ERROR") {
+            messageContents = <div class="ForumTextContents Secondary"><i>Message failed to load.</i></div>;
         }
 
         // Build the reactions.
@@ -113,7 +130,8 @@ class ForumListThread extends React.Component {
         }
 
         // Create the view.
-        return <div class="ForumThread" onClick={function() { window.open(forumThread.url) }}>
+        forumThread.forumThreadElement = this;
+        return <div class="ForumThread" forumListIndex={this.props.listIndex} onClick={function() { window.open(forumThread.url) }}>
             <div class={mainContentsClass}>
                 <div class="ForumThreadTitle">{forumThread.name}</div>
                 <div class="ForumThreadPosterHeader">
@@ -141,6 +159,7 @@ class ForumList extends React.Component {
      */
     constructor(props) {
         super(props);
+        staticApp = this;
     }
 
     /*
@@ -166,8 +185,49 @@ class ForumList extends React.Component {
 
 
 
+/*
+ * Starts loading the thread messages.
+ */
+function startLoadingMessages() {
+    let windowHeight = window.innerHeight;
+    Array.from(document.getElementsByClassName("ForumThread")).forEach(forumThreadElement => {
+        // Return if the message is not meant to be loaded.
+        let forumThreadIndex = Number(forumThreadElement.getAttribute("forumListIndex"));
+        let elementPositionY = forumThreadElement.getBoundingClientRect().top;
+        if (elementPositionY > (1.5 * windowHeight)) return;
+
+        // Return if the message is already loading or loaded.
+        let forumThread = listResponse.threads[forumThreadIndex];
+        if (forumThread.messageLoadState != null) return;
+
+        // Start loading the message.
+        forumThread.messageLoadState = "LOADING";
+        fetch("/api/contents/" + forumThread.id + "?cacheClear=" + Math.random()).then(function(response) {
+            if (!response.ok) {
+                forumThread.messageLoadState = "ERROR";
+                forumThread.forumThreadElement.refresh()
+                throw new Error("Failed to thread message " + forumThread.id);
+            }
+            return response.json();
+            }).then(function(data) {
+                forumThread.messageLoadState = "LOADED";
+                forumThread.message = data.message;
+                forumThread.forumThreadElement.refresh()
+            }).catch(function() {
+                console.log("Failed to thread message " + forumThread.id + " " + forumThread.url);
+                forumThread.messageLoadState = "ERROR";
+                forumThread.forumThreadElement.refresh()
+            });
+    })
+}
+
+
+
 // Render the forum list using React.
 ReactDOM.render(
     <ForumList/>,
     document.getElementById("ContentsScroll")
 );
+
+// Load the messages.
+setInterval(startLoadingMessages, 1000);
