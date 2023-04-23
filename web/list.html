@@ -5,7 +5,11 @@
         <title>{forumName} - {serverName} | Nexus Forum List</title>
         <link rel="stylesheet" href="/css/style.css">
 
-        <script>let listResponse = JSON.parse({initialListResponse});</script>
+        <script>
+            let listResponse = JSON.parse({initialListResponse});
+            let gitHubUrl = "{gitHubUrl}";
+            let websiteHost = "{websiteHost}";
+        </script>
 
         <!--React and Babel-->
         <script type="text/javascript" src="https://unpkg.com/react/umd/react.production.min.js"></script>

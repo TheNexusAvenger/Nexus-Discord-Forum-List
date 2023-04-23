@@ -26,6 +26,19 @@ public class Configuration
         /// </summary>
         public string BaseUrl { get; set; } = "http://localhost:8000";
     }
+
+    public class PageConfiguration
+    {
+        /// <summary>
+        /// GitHub URL to link to on the web page.
+        /// </summary>
+        public string GithubUrl { get; set; } = "https://github.com/TheNexusAvenger/Nexus-Discord-Forum-List";
+
+        /// <summary>
+        /// Name of the host of the bot + server.
+        /// </summary>
+        public string Host { get; set; } = "default";
+    }
     
     /// <summary>
     /// Configuration for Discord.
@@ -36,6 +49,11 @@ public class Configuration
     /// Configuration for the server.
     /// </summary>
     public ServerConfiguration Server { get; set; } = new ServerConfiguration();
+
+    /// <summary>
+    /// Configuration for the web page.
+    /// </summary>
+    public PageConfiguration Page { get; set; } = new PageConfiguration();
     
     /// <summary>
     /// Static configuration used.

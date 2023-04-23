@@ -471,6 +471,14 @@ class ForumList extends React.Component {
         return <div>
             <ForumListFilterBar/>
             {forumThreads}
+            <div class="BottomBarBackground">
+                <div class="BottomBar">
+                    <a href={gitHubUrl} target="_blank" rel="noopener">
+                        <img class="BottomBarIcon" src="/img/github.svg"></img>
+                    </a>
+                    <span class="BottomBarText Secondary">Nexus Discord Forum List, hosted by {websiteHost}.</span>
+                </div>
+            </div>
         </div>
     }
 }

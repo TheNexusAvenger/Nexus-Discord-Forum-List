@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Nexus.Discord.Forum.List.Server.Discord;
 using Nexus.Discord.Forum.List.Server.Model.Response;
+using Nexus.Discord.Forum.List.Server.State;
 
 namespace Nexus.Discord.Forum.List.Server.Controller;
 
@@ -28,6 +29,7 @@ public class PageController
         }
         
         // Build the response.
+        var configuration = Configuration.Get();
         var listResponse = (ForumThreadList) initialListResponse!;
         var initialResponseContents = JsonConvert.SerializeObject(listResponse, new JsonSerializerSettings
         {
@@ -40,7 +42,9 @@ public class PageController
             .Replace("{initialListResponse}", JsonConvert.SerializeObject(initialResponseContents))
             .Replace("{forumName}", listResponse.ForumName)
             .Replace("{serverName}", listResponse.ServerName)
-            .Replace("{serverIconUrl}", listResponse.ServerIconUrl ?? "https://cdn.discordapp.com/embed/avatars/0.png");
+            .Replace("{serverIconUrl}", listResponse.ServerIconUrl ?? "https://cdn.discordapp.com/embed/avatars/0.png")
+            .Replace("{gitHubUrl}", configuration.Page.GithubUrl)
+            .Replace("{websiteHost}", configuration.Page.Host);
         return new FileStreamResult(new MemoryStream(Encoding.UTF8.GetBytes(pageData)), "text/html");
     }
 
