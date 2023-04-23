@@ -1,11 +1,25 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <meta charset="utf-8"/>
         <title>{forumName} - {serverName} | Nexus Forum List</title>
         <link rel="stylesheet" href="/css/style.css">
-        <script>let initialListResponse = {initialListResponse};</script>
+
+        <script>let listResponse = JSON.parse({initialListResponse});</script>
+
+        <!--React and Babel-->
+        <script type="text/javascript" src="https://unpkg.com/react/umd/react.production.min.js"></script>
+        <script type="text/javascript" src="https://unpkg.com/react-dom/umd/react-dom.production.min.js"></script>
+        <script type="text/javascript" src="https://unpkg.com/babel-standalone/babel.js"></script>
+
+        <!--Other libraries-->
+        <script type="text/javascript" src="https://cdn.rawgit.com/showdownjs/showdown/1.9.1/dist/showdown.min.js"></script>
     </head>
     <body>
+        <!--Components-->
+        <script type="text/babel" src="/js/forumList.js"></script>
+
+        <!--Header-->
         <div class="HeaderBackground">
             <div class="Header">
                 <img class="HeaderServerIcon" src="{serverIconUrl}"></img>
@@ -14,8 +28,10 @@
                 <span class="HeaderForumName Bold Secondary">{forumName}</span>
             </div>
         </div>
+
+        <!--Contents-->
         <div class="Contents">
-            <div class="ContentsScroll"></div>
+            <div class="ContentsScroll" id="ContentsScroll"></div>
         </div>
     </body>
 </html>

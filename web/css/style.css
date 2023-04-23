@@ -1,11 +1,15 @@
 /*
  * Common
  */
-body {
+ body {
     margin: 0px;
     height: 100vh;
-    background-color: rgba(49, 51, 56, 100);
+    background-color: rgb(40, 42, 46);
     overflow: hidden;
+}
+
+p {
+    margin: 0px;
 }
 
 body, div, span {
@@ -21,11 +25,31 @@ body, div, span {
     color: rgb(196, 201, 206);
 }
 
+.FullWidth {
+    width: 100%;
+}
+
+.HalfWidth {
+    width: 50%;
+}
+
+.FullHeight {
+    height: 100%;
+}
+
+.HalfHeight {
+    height: 50%;
+}
+
+img.DarkOverlay {
+    filter: brightness(25%);
+}
+
 /*
  * Header
  */
 div.HeaderBackground {
-    background-color: rgba(43, 45, 49, 100);
+    background-color: rgba(43, 45, 49, 1);
     height: 52px;
     width: 100%;
     border-bottom: solid 2px rgb(40, 40, 40);
@@ -103,4 +127,132 @@ div.ContentsScroll::-webkit-scrollbar-thumb, div.ContentsScroll::-webkit-scrollb
     border-width: 3px;
     border-style: solid;
     border-radius: 30px;
+}
+
+div.ForumThread {
+    background-color: rgb(49, 51, 56);
+    border-radius: 12px;
+    margin-left: 24px;
+    margin-right: 24px;
+    margin-bottom: 8px;
+    padding: 12px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+div.ForumThreadMainContents {
+    width: 100%;
+    vertical-align: top;
+    display: inline-block;
+}
+
+div.ForumThreadMainContentsWithAttachments {
+    width: calc(100% - 248px);
+}
+
+div.ForumThread:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.24);
+    transform: transelateY(-2px);
+}
+
+div.ForumThreadTitle {
+    font-size: 16px;
+}
+
+div.ForumThreadPosterHeader {
+    padding-bottom: 4px;
+}
+
+img.ForumThreadPosterAvatar {
+    border-radius: 50%;
+    width: 14px;
+    height: 14px;
+    vertical-align: middle;
+}
+
+span.ForumThreadPosterName {
+    font-size: 14px;
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+span.ForumThreadCreateDate {
+    font-size: 12px;
+}
+
+div.ForumThreadTagContainer {
+    margin-bottom: 4px;
+}
+
+span.ForumThreadTag {
+    background-color: rgb(35, 36, 40);
+    font-size: 12px;
+    padding: 3px;
+    border-radius: 20px;
+    padding-left: 8px;
+    padding-right: 8px;
+    margin-right: 4px;
+}
+
+div.ForumTextContents {
+    font-size: 14px;
+    border-color: rgba(78, 80, 88, 0.48);
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 8px;
+    margin-top: 8px;
+    margin-bottom: 4px;
+    padding: 8px;
+    white-space: pre-line;
+}
+
+div.ForumThreadAttachments {
+    width: 240px;
+    height: 180px;
+    display: inline-block;
+    left: 8px;
+    position: relative;
+    border-color: rgba(78, 80, 88, 0.48);
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.ForumThreadAttachment {
+    object-fit: cover;
+    position: absolute;
+}
+
+span.ForumThreadAdditionalAttachmentsCount {
+    font-size: 48px;
+    position: relative;
+    z-index: 2;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    top: 18px; /* TODO: Find better solution for "centering" vertically. */
+}
+
+div.ForumThreadFooter {
+    margin-top: 4px;
+}
+
+svg.ForumThreadMessageCountIcon {
+    margin-right: 4px;
+    vertical-align: middle;
+}
+
+span.ForumThreadMessageCountText {
+    font-size: 14px;
+    margin-right: 8px;
+}
+
+span.ForumThreadReaction {
+    background-color: rgb(43, 45, 49);
+    font-size: 12px;
+    padding: 3px;
+    border-radius: 4px;
+    padding-right: 4px;
 }
