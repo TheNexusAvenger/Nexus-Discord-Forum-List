@@ -13,7 +13,74 @@ let converter = new showdown.Converter({
 });
 
 // Prepare storing the state.
-let staticApp = null;
+let staticList = null;
+let sortOptions = {
+    "CREATE_TIME_DESCENDING": {
+        "displayName": "Create Time (Newest First)",
+        "sortFunction": function(a, b) {
+            return new Date(a.createTime) > new Date(b.createTime) ? -1 : 1;
+        },
+    },
+    "CREATE_TIME_ASCENDING": {
+        "displayName": "Create Time (Oldest First)",
+        "sortFunction": function(a, b) {
+            return new Date(a.createTime) > new Date(b.createTime) ? -1 : 1;
+        },
+    },
+}
+let filterData = {
+    "sortOption": "CREATE_TIME_DESCENDING",
+    "attributes": [],
+    "tags": [],
+}
+
+
+
+/*
+ * Starts loading the thread messages.
+ */
+function startLoadingMessages() {
+    let windowHeight = window.innerHeight;
+    Array.from(document.getElementsByClassName("ForumThread")).forEach(forumThreadElement => {
+        // Return if the message is not meant to be loaded.
+        let forumThreadIndex = Number(forumThreadElement.getAttribute("forumListIndex"));
+        let elementPositionY = forumThreadElement.getBoundingClientRect().top;
+        if (elementPositionY > (1.5 * windowHeight)) return;
+
+        // Return if the message is already loading or loaded.
+        let forumThread = listResponse.threads[forumThreadIndex];
+        if (forumThread.messageLoadState != null) return;
+
+        // Start loading the message.
+        forumThread.messageLoadState = "LOADING";
+        fetch("/api/contents/" + forumThread.id + "?cacheClear=" + Math.random()).then(function(response) {
+            if (!response.ok) {
+                forumThread.messageLoadState = "ERROR";
+                forumThread.forumThreadElement.refresh()
+                throw new Error("Failed to thread message " + forumThread.id);
+            }
+            return response.json();
+            }).then(function(data) {
+                forumThread.messageLoadState = "LOADED";
+                forumThread.message = data.message;
+                forumThread.forumThreadElement.refresh()
+            }).catch(function() {
+                console.log("Failed to thread message " + forumThread.id + " " + forumThread.url);
+                forumThread.messageLoadState = "ERROR";
+                forumThread.forumThreadElement.refresh()
+            });
+    })
+}
+
+/*
+ * Sorts the threads.
+ */
+function sortThreads() {
+    listResponse.threads = listResponse.threads.sort(sortOptions[filterData.sortOption].sortFunction);
+    if (staticList != null) {
+        staticList.refresh();
+    }
+}
 
 
 
@@ -159,7 +226,14 @@ class ForumList extends React.Component {
      */
     constructor(props) {
         super(props);
-        staticApp = this;
+        staticList = this;
+    }
+
+    /*
+     * Refreshes the list.
+     */
+    refresh() {
+        this.setState({});
     }
 
     /*
@@ -185,43 +259,8 @@ class ForumList extends React.Component {
 
 
 
-/*
- * Starts loading the thread messages.
- */
-function startLoadingMessages() {
-    let windowHeight = window.innerHeight;
-    Array.from(document.getElementsByClassName("ForumThread")).forEach(forumThreadElement => {
-        // Return if the message is not meant to be loaded.
-        let forumThreadIndex = Number(forumThreadElement.getAttribute("forumListIndex"));
-        let elementPositionY = forumThreadElement.getBoundingClientRect().top;
-        if (elementPositionY > (1.5 * windowHeight)) return;
-
-        // Return if the message is already loading or loaded.
-        let forumThread = listResponse.threads[forumThreadIndex];
-        if (forumThread.messageLoadState != null) return;
-
-        // Start loading the message.
-        forumThread.messageLoadState = "LOADING";
-        fetch("/api/contents/" + forumThread.id + "?cacheClear=" + Math.random()).then(function(response) {
-            if (!response.ok) {
-                forumThread.messageLoadState = "ERROR";
-                forumThread.forumThreadElement.refresh()
-                throw new Error("Failed to thread message " + forumThread.id);
-            }
-            return response.json();
-            }).then(function(data) {
-                forumThread.messageLoadState = "LOADED";
-                forumThread.message = data.message;
-                forumThread.forumThreadElement.refresh()
-            }).catch(function() {
-                console.log("Failed to thread message " + forumThread.id + " " + forumThread.url);
-                forumThread.messageLoadState = "ERROR";
-                forumThread.forumThreadElement.refresh()
-            });
-    })
-}
-
-
+// Sort the initial threads.
+sortThreads()
 
 // Render the forum list using React.
 ReactDOM.render(
