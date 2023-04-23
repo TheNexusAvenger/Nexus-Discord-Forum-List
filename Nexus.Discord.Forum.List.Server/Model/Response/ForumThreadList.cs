@@ -8,6 +8,11 @@ public class ForumThreadList
     /// Name of th server.
     /// </summary>
     public string ServerName { get; set; } = null!;
+
+    /// <summary>
+    /// URL of the icon of the server.
+    /// </summary>
+    public string? ServerIconUrl { get; set; }
     
     /// <summary>
     /// Name of th forum.

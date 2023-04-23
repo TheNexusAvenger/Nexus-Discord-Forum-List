@@ -25,7 +25,8 @@ public class PageController
         var pageData = (await File.ReadAllTextAsync("web/list.html", Encoding.UTF8))
             .Replace("{initialListResponse}", JsonConvert.SerializeObject(JsonConvert.SerializeObject(initialListResponse)))
             .Replace("{forumName}", listResponse.ForumName)
-            .Replace("{serverName}", listResponse.ServerName);
+            .Replace("{serverName}", listResponse.ServerName)
+            .Replace("{serverIconUrl}", listResponse.ServerIconUrl ?? "https://cdn.discordapp.com/embed/avatars/0.png");
         return new FileStreamResult(new MemoryStream(Encoding.UTF8.GetBytes(pageData)), "text/html");
     }
 }

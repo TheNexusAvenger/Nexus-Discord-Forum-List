@@ -39,6 +39,7 @@ public class ApiController
         var response = new ForumThreadList()
         {
             ServerName = forumChannel.Guild.Name,
+            ServerIconUrl = forumChannel.Guild.IconUrl,
             ForumName = forumChannel.Name,
             Tags = forumChannel.Tags.Select(ForumThreadTag.FromForumTag).ToList(),
         };

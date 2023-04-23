@@ -2,9 +2,17 @@
 <html>
     <head>
         <title>{forumName} - {serverName} | Nexus Forum List</title>
+        <link rel="stylesheet" href="/css/style.css">
         <script>let initialListResponse = {initialListResponse};</script>
     </head>
     <body>
-        Hello world!
+        <div class="HeaderBackground">
+            <div class="Header">
+                <img class="HeaderServerIcon" src="{serverIconUrl}"></img>
+                <span class="Bold HeaderServerName">{serverName}</span>
+                <span class="HeaderForumNameSeparator">&gt;</span>
+                <span class="Bold HeaderForumName">{forumName}</span>
+            </div>
+        </div>
     </body>
 </html>
