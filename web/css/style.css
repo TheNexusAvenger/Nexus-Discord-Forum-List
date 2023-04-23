@@ -50,20 +50,20 @@ img.DarkOverlay {
  */
 div.HeaderBackground {
     background-color: rgba(43, 45, 49, 1);
-    height: 52px;
+    height: 44px;
     width: 100%;
     border-bottom: solid 2px rgb(40, 40, 40);
 }
 
 div.Header {
-    height: 52px;
+    height: 44px;
     display: table;
 }
 
 img.HeaderServerIcon {
     border-radius: 50%;
-    width: 40px;
-    height: 40px;
+    width: 32px;
+    height: 32px;
     padding-top: 6px;
     padding-bottom: 6px;
     padding-left: 10px;
@@ -71,13 +71,13 @@ img.HeaderServerIcon {
 }
 
 span.HeaderServerName {
-    font-size: 24px;
+    font-size: 18px;
     display: table-cell;
     vertical-align: middle;
 }
 
 span.HeaderForumName, span.HeaderForumNameSeparator {
-    font-size: 24px;
+    font-size: 18px;
     display: table-cell;
     vertical-align: middle;
 }
