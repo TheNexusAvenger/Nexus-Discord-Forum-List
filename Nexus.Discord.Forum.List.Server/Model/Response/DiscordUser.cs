@@ -36,7 +36,7 @@ public class DiscordUser
             Id = user.Id,
             Name = user.Username,
             DisplayName = user.Nickname ?? user.Username,
-            ProfilePicture = $"https://cdn.discordapp.com/avatars/{user.Id}/{user.AvatarId}.jpg",
+            ProfilePicture = user.GetDisplayAvatarUrl() ?? user.GetAvatarUrl() ?? $"https://cdn.discordapp.com/embed/avatars/{user.Id % 6}.png",
         };
     }
     
