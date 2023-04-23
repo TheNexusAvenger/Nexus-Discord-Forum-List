@@ -24,7 +24,7 @@ let sortOptions = {
     "CREATE_TIME_ASCENDING": {
         "displayName": "Create Time (Oldest First)",
         "sortFunction": function(a, b) {
-            return new Date(a.createTime) > new Date(b.createTime) ? -1 : 1;
+            return new Date(a.createTime) < new Date(b.createTime) ? -1 : 1;
         },
     },
 };
@@ -157,6 +157,9 @@ class ForumListFilterBar extends React.Component {
      */
     constructor(props) {
         super(props);
+        this.state = {
+            "sortViewOpen": false,
+        };
         this.refresh = this.refresh.bind(this);
     }
 
@@ -164,7 +167,7 @@ class ForumListFilterBar extends React.Component {
      * Refreshes the filter view.
      */
     refresh() {
-        this.setState({});
+        this.setState(this.state);
     }
 
     /*
@@ -203,8 +206,27 @@ class ForumListFilterBar extends React.Component {
             </div>);
         });
 
+        // Build the sort list.
+        let sortDropDown = null;
+        let sortOpenIconPath = "M16.59 8.59003L12 13.17L7.41 8.59003L6 10L12 16L18 10L16.59 8.59003Z";
+        if (this.state.sortViewOpen == true) {
+            let sortButtons = [];
+            sortOpenIconPath = "M7.41 16.0001L12 11.4201L16.59 16.0001L18 14.5901L12 8.59006L6 14.5901L7.41 16.0001Z";
+            Object.entries(sortOptions).forEach(sortMethodPair => {
+                sortButtons.push(<div class={filterData.sortOption == sortMethodPair[0] ? "FilterDropDownButton Secondary Bold" : "FilterDropDownButton Secondary"} onClick={function() { filterData.sortOption = sortMethodPair[0]; sortThreads(); }}>{sortMethodPair[1].displayName}</div>)
+            });
+            sortDropDown = <div class="FilterDropDownBackground">{sortButtons}</div>;
+        }
+
         // Return the bar.
+        let filterBar = this;
         return <div class="ForumListFilterBar">
+            <div class="FilterButton" onClick={function() {filterBar.state.sortViewOpen = !filterBar.state.sortViewOpen; filterBar.refresh();}}>
+                <svg class="FilterButtonIcon Secondary" width="16" height="16" viewBox="0 0 16 16" fill="none"><path fill="currentColor" d="M12.1803 4.66659L12.1803 14.6666H10.4701L10.4701 4.66659L8.53289 6.63325L7.33329 5.40825L11.3292 1.33325L15.3333 5.40825L14.1337 6.65825L12.1803 4.66659Z"></path><path fill="currentColor" d="M3.81962 11.3333L3.81962 1.33325L5.52983 1.33325L5.52985 11.3333L7.46703 9.36658L8.66663 10.5916L4.67068 14.6666L0.666626 10.5916L1.86622 9.34158L3.81962 11.3333Z"></path></svg>
+                <span class="FilterButtonText Secondary">Sort</span>
+                <svg class="FilterButtonToggleIcon Secondary" width="20" height="24" viewBox="0 0 24 24"><path fill="currentColor" d={sortOpenIconPath}></path></svg>
+                {sortDropDown}
+            </div>
             <div class="FilterSeparator"></div>
             {attributeButtons}
             <div class="FilterSeparator"></div>
