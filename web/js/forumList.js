@@ -83,6 +83,64 @@ function startLoadingMessages() {
 }
 
 /*
+ * Loads the filter data in the URL.
+ */
+function loadFilterData() {
+    try {
+        // Get the existing filter string.
+        let urlQuery = new URLSearchParams(window.location.search);
+        let existingFilter = urlQuery.get("filter");
+        if (existingFilter == null) {
+            existingFilter = "";
+        }
+
+        // Decode the data and set the filter data.
+        let newFilterData = JSON.parse(atob(existingFilter));
+        if (sortOptions[newFilterData.sortOption] == null) {
+            newFilterData.sortOption = "CREATE_TIME_DESCENDING";
+        }
+        filterData = newFilterData;
+    } catch (error) {
+        filterData = {
+            "sortOption": "CREATE_TIME_DESCENDING",
+            "attributes": {},
+            "tags": {},
+        }
+    }
+    if (staticList != null) {
+        staticList.refresh();
+    }
+}
+
+/*
+ * Saves the filter data in the URL.
+ */
+function saveFilterData() {
+    // Get the existing filter string.
+    let urlQuery = new URLSearchParams(window.location.search);
+    let existingFilter = urlQuery.get("filter");
+    if (existingFilter == null) {
+        existingFilter = "";
+    }
+    
+    // Build the new filter string.
+    let newFilterData = btoa(JSON.stringify(filterData));
+    if (filterData.sortOption == "CREATE_TIME_DESCENDING" && Object.entries(filterData.attributes).length == 0 && Object.entries(filterData.tags).length == 0) {
+        newFilterData = "";
+    }
+
+    // Update the URL for the filter data.
+    if (existingFilter == newFilterData) {
+        return;
+    }
+    let path = document.location.pathname;
+    if (newFilterData != "") {
+        path += "?filter=" + newFilterData;
+    }
+    history.pushState(document.location.pathname, document.title, path);
+}
+
+/*
  * Sorts the threads.
  */
 function sortThreads() {
@@ -398,6 +456,9 @@ class ForumList extends React.Component {
             return <span class="ErrorMessage Secondary">There are no threads to display.</span>
         }
 
+        // Save the filter.
+        saveFilterData();
+
         // Build the forum list display.
         let forumThreads = [];
         for (let i = 0; i < listResponse.threads.length; i++) {
@@ -415,6 +476,10 @@ class ForumList extends React.Component {
 }
 
 
+
+// Load the initial filter.
+window.addEventListener("popstate", loadFilterData);
+loadFilterData();
 
 // Sort the initial threads.
 sortThreads()
