@@ -40,8 +40,8 @@ let forumAttributeOptions = [
 ];
 let filterData = {
     "sortOption": "CREATE_TIME_DESCENDING",
-    "attributes": [],
-    "tags": [],
+    "attributes": {},
+    "tags": {},
 };
 
 
@@ -93,13 +93,42 @@ function sortThreads() {
 }
 
 /*
+ * Returns if a a thread passes the filter.
+ */
+function threadPassesFilter(forumThread) {
+    // Return false if the attributes don't match.
+    var attributes = Object.entries(filterData.attributes);
+    for (let i = 0; i < attributes.length; i++) {
+        let attributeName = attributes[i][0];
+        let attributeMatches = attributes[i][1];
+        if (forumThread.accessState[attributeName] != attributeMatches) {
+            return false;
+        }
+    }
+
+    // Return false if the tags don't match.
+    var tags = Object.entries(filterData.tags);
+    for (let i = 0; i < tags.length; i++) {
+        let tagId = tags[i][0];
+        let tagMatch = tags[i][1];
+        if (tagMatch == null) continue;
+        if (forumThread.tags.includes(tagId) != filterData.tags[tagId]) {
+            return false;
+        }
+    }
+
+    // Return true (filter passes).
+    return true;
+}
+
+/*
  * Toggles the requested filter for an attribute.
  */
 function toggleAttributeFilter(attributeName) {
     if (filterData.attributes[attributeName] == true) {
         filterData.attributes[attributeName] = false;
     } else if (filterData.attributes[attributeName] == false) {
-        filterData.attributes[attributeName] = null;
+        delete filterData.attributes[attributeName];
     } else {
         filterData.attributes[attributeName] = true;
     }
@@ -113,7 +142,7 @@ function toggleTagFilter(tagId) {
     if (filterData.tags[tagId] == true) {
         filterData.tags[tagId] = false;
     } else if (filterData.tags[tagId] == false) {
-        filterData.tags[tagId] = null;
+        delete filterData.tags[tagId];
     } else {
         filterData.tags[tagId] = true;
     }
@@ -350,7 +379,11 @@ class ForumList extends React.Component {
         // Build the forum list display.
         let forumThreads = [];
         for (let i = 0; i < listResponse.threads.length; i++) {
+            if (!threadPassesFilter(listResponse.threads[i])) continue;
             forumThreads.push(<ForumListThread listIndex={i}></ForumListThread>)
+        }
+        if (forumThreads.length == 0) {
+            forumThreads.push(<span class="ErrorMessage Secondary">No threads to display.</span>)
         }
         return <div>
             <ForumListFilterBar/>
