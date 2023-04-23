@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 using Discord;
 using Nexus.Discord.Forum.List.Server.Extension;
 
@@ -48,7 +49,7 @@ public class ForumThreadMessage
         }).OrderByDescending(reaction => reaction.Total).ToList();
         return new ForumThreadMessage()
         {
-            Message = message.Content,
+            Message = HttpUtility.HtmlEncode(message.Content),
             EditTime = message.EditedTimestamp,
             Attachments = message.Attachments.Select(DiscordAttachment.FromIAttachment).ToList(),
             Reactions = reactions,
