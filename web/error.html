@@ -3,14 +3,25 @@
     <head>
         <title>Error | Nexus Forum List</title>
         <link rel="stylesheet" href="/css/style.css">
+
+        <!--Website embeding-->
+        <meta property="og:type" content="website"/>
+        <meta property="og:title" content="Nexus Forum List"/>
+        <meta property="og:description" content="View Discord forum channels from the browser with more advanced filters using Nexus Discord Forum List."/>
+        <meta property="og:url" content="{metaPageUrl}"/>
+        <meta property="og:image" content="{metaPageUrlBase}/img/icon.png"/>
+        <meta name="theme-color" content="#0094FF" data-react-helmet="true"/>
     </head>
     <body>
+        <!--Header-->
         <div class="HeaderBackground">
             <div class="Header">
                 <img class="HeaderServerIcon" src="https://cdn.discordapp.com/embed/avatars/0.png"></img>
                 <span class="Bold HeaderServerName">Error</span>
             </div>
         </div>
+
+        <!--Contents-->
         <div class="Contents">
             <span class="ErrorMessage Secondary">{errorMessage}</span>
         </div>

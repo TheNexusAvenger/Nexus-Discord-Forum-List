@@ -20,12 +20,12 @@ public class PageController
         // Get the initial list data.
         if (Bot.GetBot().Client.ConnectionState != ConnectionState.Connected)
         {
-            return await BuildErrorPageAsync("Discord bot is offline.");
+            return await BuildErrorPageAsync("Discord bot is offline.", id);
         }
         var initialListResponse = (await new ApiController().ListThreads(id)).Value;
         if (initialListResponse is ErrorMessage errorMessage)
         {
-            return await BuildErrorPageAsync(errorMessage.Message);
+            return await BuildErrorPageAsync(errorMessage.Message, id);
         }
         
         // Build the response.
@@ -43,6 +43,8 @@ public class PageController
             .Replace("{forumName}", listResponse.ForumName)
             .Replace("{serverName}", listResponse.ServerName)
             .Replace("{serverIconUrl}", listResponse.ServerIconUrl ?? "https://cdn.discordapp.com/embed/avatars/0.png")
+            .Replace("{metaPageUrlBase}", configuration.Server.BaseUrl)
+            .Replace("{metaPageUrl}", $"{configuration.Server.BaseUrl}/list/{id}")
             .Replace("{gitHubUrl}", configuration.Page.GithubUrl)
             .Replace("{websiteHost}", configuration.Page.Host);
         return new FileStreamResult(new MemoryStream(Encoding.UTF8.GetBytes(pageData)), "text/html");
@@ -53,10 +55,13 @@ public class PageController
     /// </summary>
     /// <param name="errorMessage">Error message to display to the user.</param>
     /// <returns>Error message response to return to the user.</returns>
-    private static async Task<FileStreamResult> BuildErrorPageAsync(string errorMessage)
+    private static async Task<FileStreamResult> BuildErrorPageAsync(string errorMessage, ulong id)
     {
+        var configuration = Configuration.Get();
         var pageData = (await File.ReadAllTextAsync("web/error.html", Encoding.UTF8))
-            .Replace("{errorMessage}", errorMessage);
+            .Replace("{errorMessage}", errorMessage)
+            .Replace("{metaPageUrlBase}", configuration.Server.BaseUrl)
+            .Replace("{metaPageUrl}", $"{configuration.Server.BaseUrl}/list/{id}");
         return new FileStreamResult(new MemoryStream(Encoding.UTF8.GetBytes(pageData)), "text/html");
     }
 }
