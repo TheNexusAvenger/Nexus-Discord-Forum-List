@@ -55,7 +55,7 @@ function startLoadingMessages() {
         // Return if the message is not meant to be loaded.
         let forumThreadIndex = Number(forumThreadElement.getAttribute("forumListIndex"));
         let elementPositionY = forumThreadElement.getBoundingClientRect().top;
-        if (elementPositionY > (1.5 * windowHeight)) return;
+        if (elementPositionY > (2 * windowHeight)) return;
 
         // Return if the message is already loading or loaded.
         let forumThread = listResponse.threads[forumThreadIndex];
@@ -499,4 +499,4 @@ ReactDOM.render(
 );
 
 // Load the messages.
-setInterval(startLoadingMessages, 1000);
+setInterval(startLoadingMessages, 100);
