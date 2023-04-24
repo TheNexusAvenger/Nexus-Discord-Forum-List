@@ -1,0 +1,17 @@
+services:
+  nexus-discord-forum-list:
+    container_name: NexusDiscordForumList
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        - CONFIGURATION_FILE_PATH=configurations/configuration.json
+    restart: always
+    ports:
+      - 8000:8000
+    healthcheck:
+      test: ["CMD", "wget", "--content-on-error", "-qO-", "http://localhost:8000/health"]
+      interval: 2m
+      timeout: 10s
+      retries: 3
+      start_period: 10s
