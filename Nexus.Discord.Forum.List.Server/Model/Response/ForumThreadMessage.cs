@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Web;
 using Discord;
 using Nexus.Discord.Forum.List.Server.Extension;
+using Nexus.Discord.Forum.List.Server.State.Cache;
 
 namespace Nexus.Discord.Forum.List.Server.Model.Response;
 
@@ -38,7 +39,7 @@ public class ForumThreadMessage
     public static async Task<ForumThreadMessage?> FromIThreadChannelAsync(IThreadChannel channel)
     {
         // Get the message and return if there is none (deleted).
-        var message = await channel.GetFirstMessageAsync();
+        var message = await MessageCache.StaticMessageCache.GetAsync(channel.Id);
         if (message == null) return null;
         
         // Build the message.

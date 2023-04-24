@@ -26,6 +26,14 @@ public class Configuration
         /// </summary>
         public string BaseUrl { get; set; } = "http://localhost:8000";
     }
+    
+    public class CacheConfiguration
+    {
+        /// <summary>
+        /// Time in seconds that messages are cached.
+        /// </summary>
+        public ulong MessageCacheSeconds { get; set; } = 10;
+    }
 
     public class PageConfiguration
     {
@@ -44,6 +52,11 @@ public class Configuration
     /// Configuration for Discord.
     /// </summary>
     public DiscordConfiguration Discord { get; set; } = new DiscordConfiguration();
+
+    /// <summary>
+    /// Configuration for the caching.
+    /// </summary>
+    public CacheConfiguration Cache { get; set; } = new CacheConfiguration();
 
     /// <summary>
     /// Configuration for the server.
