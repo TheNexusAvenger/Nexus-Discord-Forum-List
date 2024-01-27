@@ -9,14 +9,6 @@ In order to access a forum, a URL is required. With the bot in a server, `/getli
 will generate the URL for a forum. It will also verify having read permissions to
 the channel.
 
-## Provided Bot
-An instance of the bot is publicly available [with the following URL](https://discord.com/api/oauth2/authorize?client_id=1098993855577206817&permissions=0&scope=bot%20applications.commands).
-However, it is recommended to host your own instance to not rely on someone else.
-Besides the built app and configuration file, the server application only operates
-in memory with no database.
-
-See the Permissions section under Setup.
-
 ## Setup
 For the setup, it is assumed you have a host somewhere. SSL is not required.
 Docker is assumed for the following steps.
